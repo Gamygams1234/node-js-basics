@@ -10,22 +10,32 @@ function printMessage(username, badgeCount, points) {
   const message = `${username} has ${badgeCount} total badge(s) and ${points} points in JavaScript`;
   console.log(message);
 }
+function getProfile(username) {
+  // Connect to the API URL (https://teamtreehouse.com/username.json)
+  const request = https.get(`https://teamtreehouse.com/${username}.json`, (response) => {
+    let body = "";
+    // Read the data
+    // making it to string so it doesn't return a buffer
+    response.on("data", (data) => {
+      body += data.toString();
+    });
 
-// Connect to the API URL (https://teamtreehouse.com/username.json)
-const request = https.get(`https://teamtreehouse.com/${username}.json`, (response) => {
-  let body = "";
-  // Read the data
-  // making it to string so it doesn't return a buffer
-  response.on("data", (data) => {
-    body += data.toString();
+    response.on("end", () => {
+      const profile = JSON.parse(body);
+      printMessage(username, profile.badges.length, profile.points.JavaScript);
+      // right now it is passing a string
+
+      // Parse the data
+      // Print the data
+    });
   });
+}
 
-  response.on("end", () => {
-    const profile = JSON.parse(body);
-    printMessage(username, profile.badges.length, profile.points.JavaScript);
-    // right now it is passing a string
-
-    // Parse the data
-    // Print the data
-  });
+const users = ["chalkers", "Francisco"];
+users.forEach((user) => {
+  getProfile(user);
 });
+
+// this can also work by useing it
+// const users = process.argv;
+// users.forEach(getProfile);
